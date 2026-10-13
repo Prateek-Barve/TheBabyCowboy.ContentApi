@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using TheBabyCowboy.ContentApi.Models;
+using TheBabyCowBoy.ContentApi.Models;
 
 namespace TheBabyCowboy.ContentApi.Data;
 
@@ -20,6 +21,9 @@ public class ContentDbContext : DbContext
     public DbSet<ProjectSkill> ProjectSkills => Set<ProjectSkill>();
 
     public DbSet<Certification> Certifications => Set<Certification>();
+    public DbSet<TravelTrip> TravelTrips => Set<TravelTrip>();
+
+    public DbSet<TravelPhoto> TravelPhotos => Set<TravelPhoto>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -123,5 +127,51 @@ public class ContentDbContext : DbContext
             entity.Property(c => c.Url)
                 .HasMaxLength(2048);
         });
+
+
+        modelBuilder.Entity<TravelTrip>(entity =>
+        {
+            entity.ToTable("TravelTrips");
+
+            entity.HasKey(t => t.Id);
+
+            entity.Property(t => t.Title)
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.Property(t => t.Location)
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.Property(t => t.Country)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(t => t.Description)
+                .IsRequired();
+
+            entity.Property(t => t.CoverImageUrl)
+                .HasMaxLength(2048);
+        });
+
+        modelBuilder.Entity<TravelPhoto>(entity =>
+        {
+            entity.ToTable("TravelPhotos");
+
+            entity.HasKey(p => p.Id);
+
+            entity.Property(p => p.ImageUrl)
+                .HasMaxLength(2048)
+                .IsRequired();
+
+            entity.Property(p => p.Caption)
+                .HasMaxLength(500);
+
+            entity.HasOne(p => p.TravelTrip)
+                .WithMany(t => t.Photos)
+                .HasForeignKey(p => p.TravelTripId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
     }
 }

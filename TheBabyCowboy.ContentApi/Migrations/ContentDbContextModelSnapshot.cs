@@ -22,6 +22,65 @@ namespace TheBabyCowboy.ContentApi.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("TheBabyCowBoy.ContentApi.Models.TravelPhoto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Caption")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<Guid>("TravelTripId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TravelTripId");
+
+                    b.ToTable("TravelPhotos", (string)null);
+                });
+
+            modelBuilder.Entity("TheBabyCowBoy.ContentApi.Models.TravelTrip", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("CoverImageUrl")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TravelTrips", (string)null);
+                });
+
             modelBuilder.Entity("TheBabyCowboy.ContentApi.Models.Certification", b =>
                 {
                     b.Property<Guid>("Id")
@@ -145,6 +204,17 @@ namespace TheBabyCowboy.ContentApi.Migrations
                     b.ToTable("ContentSkillCategories", (string)null);
                 });
 
+            modelBuilder.Entity("TheBabyCowBoy.ContentApi.Models.TravelPhoto", b =>
+                {
+                    b.HasOne("TheBabyCowBoy.ContentApi.Models.TravelTrip", "TravelTrip")
+                        .WithMany("Photos")
+                        .HasForeignKey("TravelTripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TravelTrip");
+                });
+
             modelBuilder.Entity("TheBabyCowboy.ContentApi.Models.ProjectSkill", b =>
                 {
                     b.HasOne("TheBabyCowboy.ContentApi.Models.Project", "Project")
@@ -173,6 +243,11 @@ namespace TheBabyCowboy.ContentApi.Migrations
                         .IsRequired();
 
                     b.Navigation("SkillCategory");
+                });
+
+            modelBuilder.Entity("TheBabyCowBoy.ContentApi.Models.TravelTrip", b =>
+                {
+                    b.Navigation("Photos");
                 });
 
             modelBuilder.Entity("TheBabyCowboy.ContentApi.Models.Project", b =>

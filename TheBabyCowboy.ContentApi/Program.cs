@@ -1,6 +1,8 @@
 
 using Microsoft.EntityFrameworkCore;
 using TheBabyCowboy.ContentApi.Data;
+using TheBabyCowBoy.ContentApi.Services;
+using TheBabyCowBoy.ContentApi.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +55,13 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
+
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ISkillCategoryService, SkillCategoryService>();
+builder.Services.AddScoped<ISkillService, SkillService>();
+builder.Services.AddScoped<ICertificationService, CertificationService>();
+builder.Services.AddScoped<ITravelService, TravelService>();
 
 var app = builder.Build();
 
