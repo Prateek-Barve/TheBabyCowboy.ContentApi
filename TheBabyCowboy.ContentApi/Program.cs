@@ -1,20 +1,74 @@
+
+using Microsoft.EntityFrameworkCore;
+using TheBabyCowboy.ContentApi.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Controllers
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+// Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+//builder.Services.AddSwaggerGen(options =>
+//{
+//    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+//    {
+//        Title = "TheBabyCowBoy.ContentApi",
+//        Version = "v1"
+//    });
+
+//    // Temporarily use Swagger 2.0 for compatibility testing.
+//});
+
+
+// PostgreSQL
+var connectionString =
+    builder.Configuration.GetConnectionString("ContentDatabase");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "Connection string 'ContentDatabase' is not configured.");
+}
+
+builder.Services.AddDbContext<ContentDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
+// CORS for React frontend
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactFrontend", policy =>
+    {
+        policy
+            .WithOrigins(
+                "http://localhost:5173",
+                "https://localhost:5173",
+                "http://127.0.0.1:5173",
+                "https://127.0.0.1:5173",
+                "https://YOUR-LIVE-FRONTEND-DOMAIN"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Swagger UI
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.MapOpenApi();
-}
+    options.SwaggerEndpoint(
+        "/swagger/v1/swagger.json",
+        "TheBabyCowboy.ContentApi v1");
+});
 
 app.UseHttpsRedirection();
+
+// CORS must run before authorization
+app.UseCors("ReactFrontend");
 
 app.UseAuthorization();
 
