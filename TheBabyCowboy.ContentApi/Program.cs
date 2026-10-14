@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TheBabyCowboy.ContentApi.Data;
 using TheBabyCowBoy.ContentApi.Services;
 using TheBabyCowBoy.ContentApi.Services.Interfaces;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +25,6 @@ builder.Services.AddSwaggerGen();
 //    // Temporarily use Swagger 2.0 for compatibility testing.
 //});
 
-
 // PostgreSQL
 var connectionString =
     builder.Configuration.GetConnectionString("ContentDatabase");
@@ -35,8 +35,15 @@ if (string.IsNullOrWhiteSpace(connectionString))
         "Connection string 'ContentDatabase' is not configured.");
 }
 
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+dataSourceBuilder.EnableDynamicJson();
+
+var dataSource = dataSourceBuilder.Build();
+
+//builder.Services.AddDbContext<ContentDbContext>(options =>
+//    options.UseNpgsql(connectionString));
 builder.Services.AddDbContext<ContentDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(dataSource));
 
 // CORS for React frontend
 builder.Services.AddCors(options =>
@@ -62,6 +69,8 @@ builder.Services.AddScoped<ISkillCategoryService, SkillCategoryService>();
 builder.Services.AddScoped<ISkillService, SkillService>();
 builder.Services.AddScoped<ICertificationService, CertificationService>();
 builder.Services.AddScoped<ITravelService, TravelService>();
+builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<IJournalService, JournalService>();
 
 var app = builder.Build();
 

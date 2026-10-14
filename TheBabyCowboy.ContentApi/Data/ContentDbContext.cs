@@ -24,6 +24,10 @@ public class ContentDbContext : DbContext
     public DbSet<TravelTrip> TravelTrips => Set<TravelTrip>();
 
     public DbSet<TravelPhoto> TravelPhotos => Set<TravelPhoto>();
+    public DbSet<Blog> Blogs => Set<Blog>();
+    public DbSet<JournalEntry> JournalEntries => Set<JournalEntry>();
+
+    public DbSet<JournalImage> JournalImages => Set<JournalImage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -173,5 +177,102 @@ public class ContentDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        modelBuilder.Entity<Blog>(entity =>
+        {
+            entity.ToTable("ContentBlogs");
+
+            entity.HasKey(b => b.Id);
+
+            entity.Property(b => b.Title)
+                .HasMaxLength(250)
+                .IsRequired();
+
+            entity.Property(b => b.Excerpt)
+                .HasMaxLength(500)
+                .IsRequired();
+
+            entity.Property(b => b.Description)
+                .IsRequired();
+
+            entity.Property(b => b.Category)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(b => b.Tags)
+                .HasColumnType("jsonb")
+                .IsRequired();
+
+            entity.Property(b => b.CoverImageUrl)
+                .HasMaxLength(2048);
+
+            entity.Property(b => b.PublishedAt)
+                .HasColumnType("timestamp with time zone");
+
+            entity.Property(b => b.CreatedAt)
+                .HasColumnType("timestamp with time zone")
+                .IsRequired();
+
+            entity.Property(b => b.UpdatedAt)
+                .HasColumnType("timestamp with time zone")
+                .IsRequired();
+            entity.Property(b => b.ExternalUrl)
+    .HasMaxLength(2048)
+    .IsRequired();
+
+            entity.HasIndex(b => b.PublishedAt);
+        });
+
+        modelBuilder.Entity<JournalEntry>(entity =>
+        {
+            entity.ToTable("ContentJournalEntries");
+
+            entity.HasKey(j => j.Id);
+
+            entity.Property(j => j.Title)
+                .HasMaxLength(250)
+                .IsRequired();
+
+            entity.Property(j => j.Content)
+                .IsRequired();
+
+            entity.Property(j => j.Mood)
+                .HasMaxLength(50);
+
+            entity.Property(j => j.Category)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(j => j.Tags)
+                .HasColumnType("text[]")
+                .IsRequired();
+
+            entity.Property(j => j.IsPublic)
+                .HasDefaultValue(false);
+
+            entity.HasIndex(j => j.CreatedAt);
+
+            entity.HasIndex(j => new { j.IsPublic, j.CreatedAt });
+        });
+
+        modelBuilder.Entity<JournalImage>(entity =>
+        {
+            entity.ToTable("ContentJournalImages");
+
+            entity.HasKey(i => i.Id);
+
+            entity.Property(i => i.ImageUrl)
+                .HasMaxLength(2048)
+                .IsRequired();
+
+            entity.Property(i => i.Caption)
+                .HasMaxLength(500);
+
+            entity.HasOne(i => i.JournalEntry)
+                .WithMany(j => j.Images)
+                .HasForeignKey(i => i.JournalEntryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(i => i.JournalEntryId);
+        });
     }
 }
