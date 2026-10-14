@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TheBabyCowBoy.ContentApi.DTOs.Travel;
 using TheBabyCowBoy.ContentApi.Services.Interfaces;
@@ -36,6 +37,7 @@ public class TravelController : ControllerBase
 
     // POST: api/travel
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Create(
         [FromBody] TravelTripRequestDto request)
     {
@@ -56,6 +58,7 @@ public class TravelController : ControllerBase
 
     // PUT: api/travel/{id}
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Update(
         Guid id,
         [FromBody] TravelTripRequestDto request)
@@ -76,6 +79,7 @@ public class TravelController : ControllerBase
 
     // DELETE: api/travel/{id}
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var deleted = await _service.DeleteAsync(id);
@@ -87,6 +91,7 @@ public class TravelController : ControllerBase
 
     // POST: api/travel/{id}/photos
     [HttpPost("{id:guid}/photos")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> AddPhoto(
         Guid id,
         [FromBody] TravelPhotoRequestDto request)
@@ -109,6 +114,7 @@ public class TravelController : ControllerBase
 
     // DELETE: api/travel/{id}/photos/{photoId}
     [HttpDelete("{id:guid}/photos/{photoId:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> DeletePhoto(
         Guid id,
         Guid photoId)

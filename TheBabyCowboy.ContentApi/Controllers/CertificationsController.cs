@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TheBabyCowBoy.ContentApi.DTOs.Certifications;
 using TheBabyCowBoy.ContentApi.Services.Interfaces;
@@ -31,6 +32,7 @@ public class CertificationsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Create(
         CertificationRequestDto request)
     {
@@ -50,6 +52,7 @@ public class CertificationsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Update(
         Guid id, CertificationRequestDto request)
     {
@@ -68,6 +71,7 @@ public class CertificationsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var deleted = await _service.DeleteAsync(id);

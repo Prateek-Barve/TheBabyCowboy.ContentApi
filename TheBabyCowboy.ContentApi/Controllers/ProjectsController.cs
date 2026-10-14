@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TheBabyCowBoy.ContentApi.DTOs.Projects;
 using TheBabyCowBoy.ContentApi.Services.Interfaces;
@@ -35,6 +36,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<ProjectResponseDto>> Create(
         [FromBody] ProjectRequestDto request)
     {
@@ -54,6 +56,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<ProjectResponseDto>> Update(
         Guid id,
         [FromBody] ProjectRequestDto request)
@@ -74,6 +77,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var deleted = await _projectService.DeleteAsync(id);

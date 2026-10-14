@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TheBabyCowBoy.ContentApi.DTOs.SkillCategories;
 using TheBabyCowBoy.ContentApi.Services.Interfaces;
@@ -31,6 +32,7 @@ public class SkillCategoriesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Create(
         SkillCategoryRequestDto request)
     {
@@ -50,6 +52,7 @@ public class SkillCategoriesController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Update(
         Guid id, SkillCategoryRequestDto request)
     {
@@ -68,6 +71,7 @@ public class SkillCategoriesController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try

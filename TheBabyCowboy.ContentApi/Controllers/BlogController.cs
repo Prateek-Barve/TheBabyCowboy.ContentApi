@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TheBabyCowBoy.ContentApi.DTOs.Blogs;
 using TheBabyCowBoy.ContentApi.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TheBabyCowBoy.ContentApi.Controllers;
 
@@ -39,6 +40,7 @@ public class BlogsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<BlogResponseDto>> Create(
         [FromBody] BlogRequestDto request)
     {
@@ -58,6 +60,7 @@ public class BlogsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<BlogResponseDto>> Update(
         Guid id,
         [FromBody] BlogRequestDto request)
@@ -80,6 +83,7 @@ public class BlogsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var deleted = await _blogService.DeleteAsync(id);

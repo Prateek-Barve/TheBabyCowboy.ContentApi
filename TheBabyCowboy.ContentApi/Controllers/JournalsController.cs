@@ -58,6 +58,7 @@ public class JournalsController : ControllerBase
 
     
     [HttpGet]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> GetAll(
         [FromQuery] string? search,
         [FromQuery] string? mood,
@@ -82,6 +83,8 @@ public class JournalsController : ControllerBase
 
     
     [HttpGet("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
+
     public async Task<IActionResult> GetById(Guid id)
     {
         var entry = await _journalService.GetByIdAsync(
@@ -92,6 +95,7 @@ public class JournalsController : ControllerBase
 
     
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Create(
         [FromBody] JournalRequestDto request)
     {
@@ -112,6 +116,7 @@ public class JournalsController : ControllerBase
 
     
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Update(
         Guid id,
         [FromBody] JournalRequestDto request)
@@ -130,6 +135,7 @@ public class JournalsController : ControllerBase
 
     
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var deleted = await _journalService.DeleteAsync(id);
